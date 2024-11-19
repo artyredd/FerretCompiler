@@ -4,6 +4,7 @@ namespace Ferret
 {
     public static class TokenExtensions
     {
+
         public static string ReplaceWhitespaceNames(this string str)
         {
             StringBuilder builder = new();

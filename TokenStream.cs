@@ -3,10 +3,11 @@
     public class TokenStream
     {
         private TokenCollection _input;
-        public TokenCollection InputTokens { get { return _input; } }
+        public TokenCollection Tokens { get { return _input; } }
         private TokenCollection _output = new();
         public TokenCollection OutputTokens { get { return _output; } }
-        int _position = 0;
+        private int _position = 0;
+        public int Position => _position;
 
         public TokenStream(TokenCollection inputCollection)
         {

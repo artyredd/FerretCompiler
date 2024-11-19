@@ -46,6 +46,16 @@ namespace Ferret
             return builder.ToString();
         }
 
+        public TokenCollection GetRange(int start)
+        {
+            return GetRange(start,_tokens.Count - start);
+        }
+
+        public TokenCollection GetRange(int start, int count)
+        { 
+            return _tokens.GetRange(start, count); 
+        }
+
         public TokenCollection Append(List<Token> tokens)
         {
             tokens.ForEach(x => { _tokens.Add(x); AppendToBuilder(x); });
@@ -105,6 +115,43 @@ namespace Ferret
         public int IndexOf(TokenCollection collection)
         {
             return ToString().IndexOf(collection.ToString());        
+        }
+
+        public List<int> IndexesOf(TokenCollection collection)
+        { 
+            string str = ToString();
+            string other = collection.ToString();
+
+            return IndexesOf(str,other);
+        }
+
+        public List<int> IndexesOf(Token item)
+        {
+            return IndexesOf(ToString(),$"{(int)item.Type}");
+        }
+
+        private List<int> IndexesOf(string str, string other)
+        {
+            List<int> result = new();
+
+            TokenCollection tokens = _tokens;
+            int previousLength = 0;
+            do {
+                int index = str.IndexOf(other);
+                
+                if (index == -1)
+                {
+                    break;
+                }
+
+                result.Add(previousLength + index);
+                int offset = index + other.Length;
+                previousLength += offset;
+                str = str.Substring(offset);
+            }
+            while (true);
+
+            return result;
         }
 
         public int IndexOf(Token item)
