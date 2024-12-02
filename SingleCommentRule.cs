@@ -1,13 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Ferret
+﻿namespace Ferret
 {
-    public class MacroRule : ILexerRule
+    public class SingleCommentRule : CachedRuleBase, ILexerRule
     {
-        readonly TokenCollection _pattern = new() { TokenType.Control };
+        readonly TokenCollection _pattern = new() { TokenType.Whitespace, TokenType.Control };
 
-        public static List<TokenCollection> CachedTokens { get; set; } = new();
-        
         private bool IsEndOfMacro(Token currentToken, Token previousToken)
         {
             bool isWhiteSpace = currentToken == TokenType.Whitespace;
@@ -17,20 +13,12 @@ namespace Ferret
             return isWhiteSpace && newLine && notEscaped;
         }
 
-        public static Token CacheToken(TokenCollection token)
-        {
-            Token cachedToken = new(TokenType.CachedData, string.Empty);
-            cachedToken.Id = CachedTokens.Count;
-            CachedTokens.Add(token);
-            return cachedToken;
-        }
-
         public void ApplyRule(TokenStream stream)
         {
             // cache macros so we can re-insert them later
             var indices = ValidIndexes(stream);
 
-            bool inMacro = false;
+            bool inComment = false;
             TokenCollection cachedToken = new();
             Token previousToken = new(TokenType.None, string.Empty);
             while (stream.GetToken(out var token))
@@ -39,18 +27,18 @@ namespace Ferret
 
                 if (indices.Contains(index))
                 {
-                    inMacro = true;
+                    inComment = true;
                     previousToken = token;
                 }
-                else if (inMacro && IsEndOfMacro(token, previousToken))
+                else if (inComment && IsEndOfMacro(token, previousToken))
                 {
-                    inMacro = false;
+                    inComment = false;
                     cachedToken.Append(token);
                     var marker = CacheToken(cachedToken);
                     stream.PutToken(marker);
                     continue;
                 }
-                else if (inMacro)
+                else if (inComment)
                 {
                     cachedToken.Append(token);
                     previousToken = token;
@@ -70,7 +58,7 @@ namespace Ferret
 
         bool VerifyPattern(TokenStream stream, int index)
         {
-            return stream.Tokens[index + 1].Value.StartsWith('#');
+            return stream.Tokens[index + 1].Value.StartsWith("//");
         }
 
         public bool RuleApplies(TokenStream stream)

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Ferret
 {
-    public class TokenCollection : IList<Token>, IEnumerable<Token>, IEnumerable<char>
+    public partial class TokenCollection : IList<Token>, IEnumerable<Token>, IEnumerable<char>
     {
         private readonly List<Token> _tokens = new();
         private StringBuilder _builder = new();
@@ -110,6 +110,22 @@ namespace Ferret
         IEnumerator<char> IEnumerable<char>.GetEnumerator()
         {
             return ((IEnumerable<char>)_builtString).GetEnumerator();
+        }
+
+        // runs the provided expressions to check to see if a view
+        // is the correct pattern
+        public int FindPattern(TokenPattern pattern)
+        {
+            for (int index = 0; index < _tokens.Count; index++)
+            {
+                if (pattern.Invoke(_tokens, index))
+                {
+                    return index;
+                }
+            }
+
+
+            return -1;
         }
 
         public int IndexOf(TokenCollection collection)
