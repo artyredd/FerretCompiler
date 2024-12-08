@@ -114,7 +114,7 @@ namespace Ferret
 
         // runs the provided expressions to check to see if a view
         // is the correct pattern
-        public int FindPattern(TokenPattern pattern)
+        public int IndexOf(TokenPattern pattern)
         {
             for (int index = 0; index < _tokens.Count; index++)
             {
@@ -131,6 +131,30 @@ namespace Ferret
         public int IndexOf(TokenCollection collection)
         {
             return ToString().IndexOf(collection.ToString());        
+        }
+
+        public List<int> IndexesOf(TokenPattern pattern)
+        {
+            List<int> result = new();
+
+            TokenCollection tokens = _tokens;
+            int previousIndex = 0;
+            do
+            {
+                int index = tokens.IndexOf(pattern);
+
+                if (index == -1)
+                {
+                    break;
+                }
+
+                result.Add(previousIndex + index);
+                previousIndex = index;
+                tokens = tokens.GetRange(int.Min(index+1,tokens.Count-1));
+            }
+            while (true);
+
+            return result;
         }
 
         public List<int> IndexesOf(TokenCollection collection)
@@ -227,5 +251,7 @@ namespace Ferret
             result.Append(tokens);
             return result;
         }
+
+        public static implicit operator List<Token>(TokenCollection collection) => collection._tokens;
     }
 }

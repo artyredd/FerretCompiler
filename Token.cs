@@ -21,6 +21,10 @@
             Type = type;
         }
 
+        public bool EndsWith(string s) => Value.EndsWith(s);
+        public bool EndsWith(char c) => Value.EndsWith(c);
+
+
         public override string ToString()
         {
             return $"{{ type: {Type}, value: {Value.ToString().ReplaceWhitespaceNames()} }}";

@@ -21,6 +21,18 @@ namespace Ferret
             return this;
         }
 
+        public TokenPattern When(string s)
+        {
+            _expressions.Add(x=> x == s);
+            return this;
+        }
+
+        public TokenPattern When(char c)
+        {
+            _expressions.Add(x=>x == $"{c}");
+            return this;
+        }
+
         public TokenPattern When(TokenType type)
         {
             _expressions.Add(x => x == type);

@@ -4,19 +4,19 @@ namespace Ferret
 {
     public class MacroRule : ILexerRule
     {
-        readonly TokenCollection _pattern = new() { TokenType.Control };
+        private readonly TokenPattern _pattern = new TokenPattern()
+            .When(TokenType.Control)
+            .When("#")
+            .IsPreceededBy(TokenType.Whitespace)
+            .IsFollowedBy(TokenType.Text);
+
+        private readonly TokenPattern _endOfMacroPattern = new TokenPattern()
+            .When(TokenType.Whitespace)
+            .When(x=>x.EndsWith(Environment.NewLine))
+            .IsPreceededBy(x=>!x.EndsWith('\\'));
 
         public static List<TokenCollection> CachedTokens { get; set; } = new();
         
-        private bool IsEndOfMacro(Token currentToken, Token previousToken)
-        {
-            bool isWhiteSpace = currentToken == TokenType.Whitespace;
-            bool newLine = currentToken.Value.EndsWith('\n');
-            bool notEscaped = !previousToken.Value.EndsWith('\\');
-
-            return isWhiteSpace && newLine && notEscaped;
-        }
-
         public static Token CacheToken(TokenCollection token)
         {
             Token cachedToken = new(TokenType.CachedData, string.Empty);
@@ -40,9 +40,8 @@ namespace Ferret
                 if (indices.Contains(index))
                 {
                     inMacro = true;
-                    previousToken = token;
                 }
-                else if (inMacro && IsEndOfMacro(token, previousToken))
+                else if (inMacro && _endOfMacroPattern.Invoke(stream.Tokens, index))
                 {
                     inMacro = false;
                     cachedToken.Append(token);
@@ -50,14 +49,12 @@ namespace Ferret
                     stream.PutToken(marker);
                     continue;
                 }
-                else if (inMacro)
+                
+                if (inMacro)
                 {
                     cachedToken.Append(token);
-                    previousToken = token;
                     continue;
                 }
-
-                previousToken = token;
 
                 stream.PutToken(token);
             }
@@ -65,12 +62,7 @@ namespace Ferret
 
         List<int> ValidIndexes(TokenStream stream)
         {
-            return stream.Tokens.IndexesOf(_pattern).Where(x => VerifyPattern(stream, x)).ToList();
-        }
-
-        bool VerifyPattern(TokenStream stream, int index)
-        {
-            return stream.Tokens[index + 1].Value.StartsWith('#');
+            return stream.Tokens.IndexesOf(_pattern);
         }
 
         public bool RuleApplies(TokenStream stream)
