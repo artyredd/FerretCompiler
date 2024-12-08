@@ -70,9 +70,14 @@ namespace Ferret
                 result = result && exprValue;
             }
 
+            if (!result)
+            {
+                return false;
+            }
+
             // dont bother checking preceeding or following expressions
             // if we dont have to
-            if (result && (_preExpressions.Count > 0 || _postExpressions.Count > 0))
+            if (_preExpressions.Count > 0 || _postExpressions.Count > 0)
             {
                 int preceedingIndex = int.Max(index - _preExpressions.Count, 0);
                 int followingIndex = int.Min(index+1, tokens.Count - 1);
@@ -85,19 +90,22 @@ namespace Ferret
                     return false;
                 }
 
-                for (int i = preceedingIndex; i < index; i++)
+                int i = index;
+                int expressionIndex = 0;
+                while (i-->preceedingIndex)
                 {
                     var token = tokens[i];
-                    if (_preExpressions[i-preceedingIndex](token) is false)
+                    if (_preExpressions[expressionIndex++](token) is false)
                     {
                         return false;
                     }
                 }
 
-                for (int i = followingIndex; i < int.Min(_postExpressions.Count, tokens.Count); i++)
+                expressionIndex = 0;
+                for (i = followingIndex; i < int.Min(_postExpressions.Count, tokens.Count); i++)
                 {
                     var token = tokens[i];
-                    if (_postExpressions[i - index](token) is false)
+                    if (_postExpressions[expressionIndex++](token) is false)
                     {
                         return false;
                     }
