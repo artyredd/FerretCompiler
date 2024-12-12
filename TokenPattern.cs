@@ -80,11 +80,10 @@ namespace Ferret
             {
                 bool exprValue = expr(tokens[index]);
                 result = result && exprValue;
-            }
-
-            if (!result)
-            {
-                return false;
+                if (result is false)
+                {
+                    return false;
+                }
             }
 
             // dont bother checking preceeding or following expressions

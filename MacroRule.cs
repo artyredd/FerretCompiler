@@ -12,8 +12,8 @@ namespace Ferret
 
         private readonly TokenPattern _endOfMacroPattern = new TokenPattern()
             .When(TokenType.Whitespace)
-            .When(x=>x.EndsWith(Environment.NewLine))
-            .IsPreceededBy(x=>!x.EndsWith('\\'));
+            .When(x => x.EndsWith('\n') || x.EndsWith("\r\n"))
+            .IsPreceededBy(x => !x.EndsWith("\\"));
 
         public static List<TokenCollection> CachedTokens { get; set; } = new();
         
@@ -32,7 +32,6 @@ namespace Ferret
 
             bool inMacro = false;
             TokenCollection cachedToken = new();
-            Token previousToken = new(TokenType.None, string.Empty);
             while (stream.GetToken(out var token))
             {
                 int index = stream.Position - 1;
