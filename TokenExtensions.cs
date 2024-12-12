@@ -4,6 +4,29 @@ namespace Ferret
 {
     public static class TokenExtensions
     {
+        public static string[] SplitInclusive(this string source, string delimiter)
+        {
+            string str = source;
+            var result = new List<string>();
+
+            int index = 0;
+            while ((index = str.IndexOf(delimiter)) != -1)
+            {
+                if (index > 0)
+                { 
+                    result.Add(str[..index]);
+                }
+                result.Add(delimiter);
+                str = str[(index+delimiter.Length)..];
+            }
+
+            if (str.Length > 0)
+            { 
+                result.Add(str);
+            }
+
+            return result.ToArray();
+        }
 
         public static string ReplaceWhitespaceNames(this string str)
         {

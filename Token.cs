@@ -49,11 +49,34 @@
 
         public bool EndsWith(string s) => Value.EndsWith(s);
         public bool EndsWith(char c) => Value.EndsWith(c);
+        public bool StartsWith(string s) => Value.StartsWith(s);
+        public bool StartsWith(char c) => Value.StartsWith(c);
+        public bool Contains(string s) => Value.Contains(s);
+        public bool Contains(char c) => Value.Contains(c);
 
+        public Token[] Split(string s)
+        {
+            string[] splitStrings = Value.SplitInclusive(s);
+            var result = new List<Token>();
+
+            foreach (var str in splitStrings)
+            {
+                result.Add(new Token(Type, str));
+            }
+
+            return result.ToArray();
+        }
 
         public override string ToString()
         {
             return $"{{ type: {Type}, value: {Value.ToString().ReplaceWhitespaceNames()} }}";
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Token token &&
+                   Type == token.Type &&
+                   Value == token.Value;
         }
 
         public static implicit operator string(Token t) => t.Value;

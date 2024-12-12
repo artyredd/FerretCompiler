@@ -16,7 +16,7 @@ namespace Ferret
             .IsPreceededBy(x => !x.EndsWith("\\"));
 
         public static List<TokenCollection> CachedTokens { get; set; } = new();
-        
+
         public static Token CacheToken(TokenCollection token)
         {
             Token cachedToken = new(TokenType.CachedData, string.Empty);
@@ -48,7 +48,7 @@ namespace Ferret
                     stream.PutToken(marker);
                     continue;
                 }
-                
+
                 if (inMacro)
                 {
                     cachedToken.Append(token);
