@@ -60,9 +60,9 @@ namespace Ferret
 
                 TokenType currentType = GetTokenType(c);
 
-                if (currentType != previousType)
+                if (currentType != previousType || currentType == TokenType.Control)
                 {
-                    AddToken(tokenStartIndex,i,previousType);
+                    AddToken(tokenStartIndex, i, previousType);
 
                     previousType = currentType;
                     tokenStartIndex = i;

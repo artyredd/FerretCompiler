@@ -47,9 +47,19 @@ namespace Ferret
 
         public TokenPattern IsPreceededBy(TokenType type)
         {
-            _preExpressions.Add(x=>x==type);
-            return this;
+            return IsPreceededBy(x => x == type);
         }
+
+        public TokenPattern IsPreceededBy(string s)
+        {
+            return IsPreceededBy(x => x == s);
+        }
+
+        public TokenPattern IsPreceededBy(char c)
+        {
+            return IsPreceededBy(x => x == $"{c}");
+        }
+
 
         public TokenPattern IsFollowedBy(Func<Token,bool> expression)
         { 
@@ -59,8 +69,17 @@ namespace Ferret
 
         public TokenPattern IsFollowedBy(TokenType type)
         {
-            _postExpressions.Add(x => x == type);
-            return this;
+            return IsFollowedBy(x => x == type);
+        }
+
+        public TokenPattern IsFollowedBy(string s)
+        {
+            return IsFollowedBy( x => x == s);
+        }
+
+        public TokenPattern IsFollowedBy(char c)
+        {
+            return IsFollowedBy(x => x == $"{c}");
         }
 
         public bool Invoke(List<Token> tokens, int index)
