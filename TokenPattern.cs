@@ -60,6 +60,21 @@ namespace Ferret
             return IsPreceededBy(x => x == $"{c}");
         }
 
+        public TokenPattern IsNotPreceededBy(TokenType type)
+        {
+            return IsPreceededBy(x => x != type);
+        }
+
+        public TokenPattern IsNotPreceededBy(string s)
+        {
+            return IsPreceededBy(x => x != s);
+        }
+
+        public TokenPattern IsNotPreceededBy(char c)
+        {
+            return IsPreceededBy(x => x != $"{c}");
+        }
+
 
         public TokenPattern IsFollowedBy(Func<Token,bool> expression)
         { 
