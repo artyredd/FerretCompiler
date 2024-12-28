@@ -24,7 +24,13 @@ namespace Ferret
             bool isControl = !isWhitespace && !isLetterOrNumber;
 
             if (isLetterOrNumber)
+            {
+                if (c == '=')
+                {
+                    return TokenType.Control;
+                }
                 return TokenType.Text;
+            }
 
             if (isWhitespace)
                 return TokenType.Whitespace;

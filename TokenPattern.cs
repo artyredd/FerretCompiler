@@ -97,6 +97,21 @@ namespace Ferret
             return IsFollowedBy(x => x == $"{c}");
         }
 
+        public TokenPattern IsNotFollowedBy(TokenType type)
+        {
+            return IsFollowedBy(x => x != type);
+        }
+
+        public TokenPattern IsNotFollowedBy(string s)
+        {
+            return IsFollowedBy(x => x != s);
+        }
+
+        public TokenPattern IsNotFollowedBy(char c)
+        {
+            return IsFollowedBy(x => x != $"{c}");
+        }
+
         public bool Invoke(List<Token> tokens, int index)
         {
             if (tokens is null)
