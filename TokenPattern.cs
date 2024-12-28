@@ -132,7 +132,7 @@ namespace Ferret
                 }
 
                 expressionIndex = 0;
-                for (i = followingIndex; i < int.Min(_postExpressions.Count, tokens.Count); i++)
+                for (i = followingIndex; i < int.Min(followingIndex+_postExpressions.Count, tokens.Count); i++)
                 {
                     var token = tokens[i];
                     if (_postExpressions[expressionIndex++](token) is false)
